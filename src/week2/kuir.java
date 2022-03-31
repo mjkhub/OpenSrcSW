@@ -9,6 +9,8 @@ public class kuir { // main 함수
 
 		String command = args[0];
 		String path = args[1];
+		String query="";
+		if(args.length ==4) query = args[3];
 		
 		if(command.equals("-c")) {
 			makeCollection collection = new makeCollection(path);
@@ -23,6 +25,10 @@ public class kuir { // main 함수
 		else if(command.equals("-i")) {
 			indexer collection = new indexer(path);
 			collection.convertXmlToPost();
+		}
+		else if(command.equals("-s")) {
+			searcher collection = new searcher(query, path);
+			collection.calSim();
 		}
 //		makeCollection week2_result = new makeCollection("./html");
 //		makeKeyword week3_result = new makeKeyword("./collection.xml");
