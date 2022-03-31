@@ -16,7 +16,7 @@ public class indexer { //week4_ParsingXmlToPost
 		this.xmlPath = xmlPath;
 	}
 	
-	public void convertXmlToPost() throws  Exception{
+	public void convertXmlToPost() throws  Exception{ //최종 key(String): 단어 value(String): doc index 결과 
 		// TODO Auto-generated method stub
 		File file = makeFile(xmlPath);
 		org.jsoup.nodes.Document xml = Jsoup.parse(file, "UTF-8", "", Parser.xmlParser()); //xml로 읽어오기
@@ -47,7 +47,7 @@ public class indexer { //week4_ParsingXmlToPost
 			StringBuilder sb = new StringBuilder();
 			String key = keyIt.next();
 			ArrayList<Integer> value = keyWordMap.get(key);
-			sb.append(key).append(" ->").append(' ');
+//			sb.append(key).append(" ->").append(' ');
 			for(int i=0; i<value.size(); i=i+2) {
 				//내 결과가 맞는 듯?
 //				sb.append(value.get(i)).append(' ');
@@ -56,11 +56,12 @@ public class indexer { //week4_ParsingXmlToPost
 				sb.append(getWeight(value.get(i+1), value.size()/2)).append(' ');
 			}
 //			sb.append('\n');
-			System.out.println(sb);
+//			System.out.println(sb);
 			mapToBeWrited.put(key, sb.toString());
 		}
 		//연산을 저장
 	
+		//write
 		FileOutputStream fos = new FileOutputStream("./index.post");
 		ObjectOutputStream oos = new ObjectOutputStream(fos);
 		oos.writeObject(mapToBeWrited);
@@ -89,10 +90,12 @@ public class indexer { //week4_ParsingXmlToPost
 	public static void printMap(HashMap<String, String> map) {
 //		HashMap<String, ArrayList<Integer>> mapReaded = (HashMap)obj;
 		Iterator<String> it = map.keySet().iterator();
+		StringBuilder sb = new StringBuilder();
 		while(it.hasNext()) {
 			String key = it.next();
 			String value = map.get(key);
-			System.out.println(value);
+//			sb.append(key).append(" ->").append(' ').append(value);
+			System.out.println(key +" -> " + value);
 		}
 	}
 	
