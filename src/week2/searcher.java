@@ -48,7 +48,23 @@ public class searcher {
 				result[index] += weightofK * weightofdoc;
 			}
 		}
-	
+		//size
+		double[] sizeOfdoc = new double[5];
+		double sizeOfk = 0;
+		for(int i=0; i<q.length; i=i+2) { //query의 단어 개수만큼 돌자
+			String key= q[i];
+			double weightofK = Double.parseDouble(q[i+1]);
+			sizeOfk += weightofK * weightofK;
+			String[] value = mapReaded.get(key).split(" ");
+			for(int j=0; j<value.length; j=j+2) {
+				int index = Integer.parseInt(value[j]);
+				double weightofdoc = Double.parseDouble(value[j+1]);
+				sizeOfdoc[j] += weightofdoc * weightofdoc;
+			}
+		}
+		/* double mulipleSize = Math.sqrt([) * Math.sqrt(sizeOfk); */
+		
+		//
 		if(isZero(result)) {
 			System.out.println("query의 모든 단어들을 포함하는 파일이 존재하지 않습니다.");
 			System.exit(0);
