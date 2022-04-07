@@ -19,6 +19,7 @@ import org.snu.ids.kkma.index.KeywordList;
 
 public class searcher {
 
+	private static final double BIAS = 0.000000000000001; //good idea
 	private String query;
 	private String path;
 	public searcher(String query, String path) {
@@ -36,7 +37,7 @@ public class searcher {
 		String[] q = genKkma(query).toString().split(":|#"); //이 두개를 가지고 처리하면 됨
 		
 		double[] result = new double[5]; //내적을 한 결과값을 저장하는 컨테이너
-		
+		//내적을 하는 부분
 		for(int i=0; i<q.length; i=i+2) { //query의 단어 개수만큼 돌자
 			String key= q[i];
 			double weightofK = Double.parseDouble(q[i+1]);
@@ -48,12 +49,34 @@ public class searcher {
 				result[index] += weightofK * weightofdoc;
 			}
 		}
+		
+		//size
+		double sizeofK = 0; //query의 문장의 weight
+		for(int i=0; i<q.length; i=i+2) sizeofK += Double.parseDouble(q[i+1]);
+
+		double[] sizeofdoc = new double[5];
+		for(int i=0; i<q.length; i=i+2) { //query의 단어 개수만큼 돌자
+			String key= q[i];
+			String[] value = mapReaded.get(key).split(" ");
+			for(int j=0; j<value.length; j=j+2) {
+				int index = Integer.parseInt(value[j]);
+				double weightofdoc = Double.parseDouble(value[j+1]);
+				sizeofdoc[index] += weightofdoc* weightofdoc;
+			}
+		}
+		
+		for(int i=0; i<5; i++) { // get cos
+			result[i]  = result[i] / ( Math.sqrt(sizeofK) * Math.sqrt(sizeofdoc[i] + BIAS));
+ 		}
+		
+		//size
 		if(isZero(result)) {
 			System.out.println("query의 모든 단어들을 포함하는 파일이 존재하지 않습니다.");
 			System.exit(0);
 		}
-
-		ArrayList<double[]> indexAndResult = new ArrayList<double[]>(); //0:index 1:weight
+		// -> 새로 추가를 할 때 반환은 result를 해주면 될듯
+		
+		ArrayList<double[]> indexAndResult = new ArrayList<double[]>(); //0:index 1: inner product -> cos size
 		for(int i=0; i<5; i++) indexAndResult.add(new double[]{i, result[i]});
 	
 //		for(int i=0; i<5; i++) System.out.println(indexAndResult.get(i)[1]);
@@ -76,9 +99,9 @@ public class searcher {
 		org.jsoup.nodes.Document xml = Jsoup.parse(file, "UTF-8", "", Parser.xmlParser());
 		Elements titles = xml.select("title");
 		for(int i=0; i<3; i++) { //collection.xml로부터 파일을 가져오는 부분
-			if((int)indexAndResult.get(i)[1]!=0) {
+			if(indexAndResult.get(i)[1]!=0.0) {
 //				System.out.println(i+1+"위: " + titles.get((int)indexAndResult.get(i)[0]).text() + " 문서번호: "+ (int)(indexAndResult.get(i)[0]+1));
-				System.out.println(i+1+"위: " + titles.get((int)indexAndResult.get(i)[0]).text());
+				System.out.println(i+1+"위: " + titles.get((int)indexAndResult.get(i)[0]).text() + " " + indexAndResult.get(i)[1]);
 			}
 		}
 		
