@@ -129,6 +129,12 @@ public class searcher {
 		}
 		
 	}
+		
+	}
+	
+	public static void calSim() {
+		//empty ...
+	}
 
 	public static StringBuilder genKkma(String testString) {
 		StringBuilder sb = new StringBuilder();
